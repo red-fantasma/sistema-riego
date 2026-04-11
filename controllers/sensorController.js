@@ -1,17 +1,8 @@
-import Sensor from "../models/Sensor.js";
-import Irrigation from "../models/Irrigation.js";
-import { shouldIrrigate } from "../services/irrigationService.js";
-
-let pumpState = "OFF";
-
-/**
- * 📌 Recibir datos del ESP32 SIN autenticación
- */
-export const addSensorData = async (req, res) => {
+export const addSensorDevice = async (req, res) => {
   try {
-    const { temperature, deviceId } = req.body;
+    const { temperature } = req.body;
 
-    // Validación básica
+    // Validación
     if (temperature === undefined) {
       return res.status(400).json({
         message: "La temperatura es requerida"
@@ -21,12 +12,12 @@ export const addSensorData = async (req, res) => {
     // Guardar en MongoDB
     const newSensor = new Sensor({
       temperature,
-      device: deviceId || "ESP32_DEFAULT"
+      device: "ESP32"
     });
 
     await newSensor.save();
 
-    // Lógica de riego automático
+    // Lógica automática
     const irrigate = await shouldIrrigate(temperature);
 
     if (irrigate) {
@@ -40,44 +31,14 @@ export const addSensorData = async (req, res) => {
       pumpState = "OFF";
     }
 
+    // RESPUESTA CLAVE PARA ESP32
     res.json({
-      message: "Dato recibido correctamente",
-      temperature,
-      device: deviceId,
-      irrigationActivated: irrigate,
-      pumpState
+      irrigationActivated: irrigate
     });
 
   } catch (error) {
     res.status(500).json({
-      message: "Error al guardar datos",
-      error: error.message
-    });
-  }
-};
-
-
-/**
- * 📌 Registrar dispositivo (opcional)
- */
-export const addSensorDevice = async (req, res) => {
-  try {
-    const { name, location } = req.body;
-
-    const device = {
-      name: name || "ESP32",
-      location: location || "Sin ubicación",
-      createdAt: new Date()
-    };
-
-    res.json({
-      message: "Dispositivo registrado",
-      device
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      message: "Error al registrar dispositivo",
+      message: "Error en sensor device",
       error: error.message
     });
   }
