@@ -1,5 +1,5 @@
 import express from "express";
-import { addSensorData } from "../controllers/sensorController.js";
+import { addSensorData, addSensorDevice } from "../controllers/sensorController.js";
 
 const router = express.Router();
 
