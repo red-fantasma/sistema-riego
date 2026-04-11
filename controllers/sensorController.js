@@ -5,7 +5,7 @@ import { shouldIrrigate } from "../services/irrigationService.js";
 let pumpState = "OFF";
 
 /**
- * 📌 Registrar datos del sensor
+ * 📌 Recibir datos del ESP32 SIN autenticación
  */
 export const addSensorData = async (req, res) => {
   try {
@@ -18,26 +18,24 @@ export const addSensorData = async (req, res) => {
       });
     }
 
-    // Guardar lectura con referencia al dispositivo
+    // Guardar en MongoDB
     const newSensor = new Sensor({
       temperature,
-      device: deviceId || null
+      device: deviceId || "ESP32_DEFAULT"
     });
 
     await newSensor.save();
 
-    // Decidir si se activa el riego
+    // Lógica de riego automático
     const irrigate = await shouldIrrigate(temperature);
 
     if (irrigate) {
       pumpState = "ON";
 
-      const irrigation = new Irrigation({
+      await new Irrigation({
         duration: 10,
         trigger: "automatic"
-      });
-
-      await irrigation.save();
+      }).save();
     } else {
       pumpState = "OFF";
     }
@@ -45,14 +43,14 @@ export const addSensorData = async (req, res) => {
     res.json({
       message: "Dato recibido correctamente",
       temperature,
-      deviceId,
+      device: deviceId,
       irrigationActivated: irrigate,
       pumpState
     });
 
   } catch (error) {
     res.status(500).json({
-      message: "Error al guardar datos del sensor",
+      message: "Error al guardar datos",
       error: error.message
     });
   }
@@ -60,28 +58,20 @@ export const addSensorData = async (req, res) => {
 
 
 /**
- * 📌 Registrar dispositivo
+ * 📌 Registrar dispositivo (opcional)
  */
 export const addSensorDevice = async (req, res) => {
   try {
     const { name, location } = req.body;
 
-    // Validación
-    if (!name || !location) {
-      return res.status(400).json({
-        message: "Nombre y ubicación son requeridos"
-      });
-    }
-
-    // Aquí puedes guardar en MongoDB si luego creas un modelo Device
     const device = {
-      name,
-      location,
+      name: name || "ESP32",
+      location: location || "Sin ubicación",
       createdAt: new Date()
     };
 
     res.json({
-      message: "Dispositivo registrado correctamente",
+      message: "Dispositivo registrado",
       device
     });
 
