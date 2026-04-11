@@ -10,4 +10,4 @@ const irrigationSchema = new mongoose.Schema({
   trigger: String
 });
 
-export default mongoose.model("Irrigation", irrigationSchema);
+export default mongoose.model("Irrigation", irrigationSchema); 
