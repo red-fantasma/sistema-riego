@@ -1,9 +1,9 @@
 import express from "express";
-import { addSensorData, addSensorDevice } from "../controllers/sensorController.js";
+import { addSensorDevice } from "../controllers/sensorController.js";
 
 const router = express.Router();
 
-router.post("/", addSensorData);
+// 📌 Ruta exclusiva para ESP32 (SIN TOKEN)
 router.post("/device", addSensorDevice);
 
 export default router;

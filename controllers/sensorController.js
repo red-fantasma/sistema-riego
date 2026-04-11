@@ -1,3 +1,14 @@
+import Sensor from "../models/Sensor.js";
+import Irrigation from "../models/Irrigation.js";
+import { shouldIrrigate } from "../services/irrigationService.js";
+
+// Estado de la bomba (puedes mejorar luego con DB)
+let pumpState = "OFF";
+
+/**
+ * 📌 Endpoint para ESP32 (SIN TOKEN)
+ * Guarda datos + decide riego
+ */
 export const addSensorDevice = async (req, res) => {
   try {
     const { temperature } = req.body;
@@ -31,7 +42,7 @@ export const addSensorDevice = async (req, res) => {
       pumpState = "OFF";
     }
 
-    // RESPUESTA CLAVE PARA ESP32
+    // Respuesta simple para ESP32
     res.json({
       irrigationActivated: irrigate
     });
