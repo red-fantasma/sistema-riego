@@ -11,7 +11,7 @@ let pumpState = "OFF";
  */
 export const addSensorDevice = async (req, res) => {
   try {
-    const { temperature } = req.body;
+    const { temperature, humidity, deviceId } = req.body;
 
     // Validación
     if (temperature === undefined) {
