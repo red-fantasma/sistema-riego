@@ -23,7 +23,8 @@ export const addSensorDevice = async (req, res) => {
     // Guardar en MongoDB
     const newSensor = new Sensor({
       temperature,
-      device: "ESP32"
+      humidity,
+      device: "esp32-01"
     });
 
     await newSensor.save();
