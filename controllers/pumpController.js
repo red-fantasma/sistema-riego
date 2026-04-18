@@ -1,24 +1,36 @@
 import Irrigation from "../models/Irrigation.js";
 
+// Estado global (igual que en sensorController)
 let pumpState = "OFF";
 
 export const controlPump = async (req, res) => {
-  const { state } = req.body;
+  try {
+    const { action } = req.body;
 
-  pumpState = state;
+    if (action === "ON") {
+      pumpState = "ON";
 
-  // si se enciende, guardar riego
-  if (state === "ON") {
-    const newIrrigation = new Irrigation({
-      duration: 10, // puedes mejorar esto luego
-      trigger: "manual"
+      await new Irrigation({
+        duration: 10,
+        trigger: "manual"
+      }).save();
+
+    } else {
+      pumpState = "OFF";
+    }
+
+    res.json({
+      message: `Bomba ${pumpState}`,
+      pumpActive: pumpState === "ON"
     });
 
-    await newIrrigation.save();
+  } catch (error) {
+    res.status(500).json({
+      message: "Error controlando bomba",
+      error: error.message
+    });
   }
-
-  res.json({
-    message: `Pump ${state}`,
-    state
-  });
 };
+
+// 👇 EXPORTAMOS ESTADO para usar en sensorController
+export const getPumpState = () => pumpState;
