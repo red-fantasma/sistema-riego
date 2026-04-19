@@ -7,15 +7,12 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 🔍 Buscar por email (NO username)
     const user = await User.findOne({ email });
-
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-
     if (!isMatch) {
       return res.status(401).json({ message: "Contraseña incorrecta" });
     }
@@ -29,10 +26,7 @@ export const login = async (req, res) => {
     res.json({
       token,
       email: user.email,
-      user: {
-        id: user._id,
-        role: user.role
-      }
+      user: { id: user._id, role: user.role }
     });
 
   } catch (error) {
@@ -42,23 +36,24 @@ export const login = async (req, res) => {
 
 // --- REGISTRO ---
 export const register = async (req, res) => {
-  const { username, password } = req.body;
-
   try {
-    // 1. Verificar si el usuario ya existe
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ message: "El nombre de usuario ya está en uso" });
+    const { email, password } = req.body; // ← ahora usa email
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email y contraseña son requeridos" });
     }
 
-    // 2. Encriptar contraseña
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "El email ya está registrado" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 3. Guardar usuario
     const newUser = new User({
-      username,
+      email,
       password: hashedPassword,
-      role: "user" // Por defecto
+      role: "user"
     });
 
     await newUser.save();
@@ -66,7 +61,7 @@ export const register = async (req, res) => {
     res.status(201).json({ message: "Usuario creado correctamente" });
 
   } catch (error) {
-    console.error(error); // Útil para debug
+    console.error(error);
     res.status(500).json({ message: "Error al registrar usuario" });
   }
-}; // <-- Aquí faltaba cerrar la función
+};
