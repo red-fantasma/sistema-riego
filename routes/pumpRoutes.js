@@ -1,36 +1,18 @@
-import Irrigation from "../models/Irrigation.js";
+import express from "express";
+import { controlPump } from "../controllers/pumpController.js";
+import { verifyToken } from "../middleware/authMiddleware.js";
 
-// Estado global (igual que en sensorController)
-let pumpState = "OFF";
+const router = express.Router();
 
-export const controlPump = async (req, res) => {
-  try {
-    const { action } = req.body;
+/**
+ * 🔘 Control manual de la bomba
+ * 🔒 Protegido con token (solo usuarios logueados)
+ * 
+ * Body esperado:
+ * {
+ *   "action": "ON"  // o "OFF"
+ * }
+ */
+router.post("/", verifyToken, controlPump);
 
-    if (action === "ON") {
-      pumpState = "ON";
-
-      await new Irrigation({
-        duration: 10,
-        trigger: "manual"
-      }).save();
-
-    } else {
-      pumpState = "OFF";
-    }
-
-    res.json({
-      message: `Bomba ${pumpState}`,
-      pumpActive: pumpState === "ON"
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      message: "Error controlando bomba",
-      error: error.message
-    });
-  }
-};
-
-// 👇 EXPORTAMOS ESTADO para usar en sensorController
-export const getPumpState = () => pumpState;
+export default router;
