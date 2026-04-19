@@ -10,7 +10,7 @@ import sensorRoutes from "./routes/sensorRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 import backupRoutes from "./routes/backupRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import sensorRoutes from "./routes/sensorRoutes.js";
+
 
 dotenv.config();
 
