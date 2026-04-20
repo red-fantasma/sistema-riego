@@ -137,3 +137,25 @@ export const getAllSensors = async (req, res) => {
     });
   }
 };
+// ---------------- ELIMINAR TODOS ----------------
+export const deleteAllSensors = async (req, res) => {
+  try {
+    await Sensor.deleteMany({});
+    res.json({ message: "Todos los registros eliminados" });
+  } catch (error) {
+    res.status(500).json({ message: "Error eliminando registros", error: error.message });
+  }
+};
+
+// ---------------- ELIMINAR ÚLTIMOS 15 DÍAS ----------------
+export const deleteLast15Days = async (req, res) => {
+  try {
+    const fecha = new Date();
+    fecha.setDate(fecha.getDate() - 15);
+
+    await Sensor.deleteMany({ date: { $gte: fecha } });
+    res.json({ message: "Registros de los últimos 15 días eliminados" });
+  } catch (error) {
+    res.status(500).json({ message: "Error eliminando registros", error: error.message });
+  }
+};

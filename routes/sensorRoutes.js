@@ -3,7 +3,9 @@ import {
   addSensorDevice,
   getLatestSensor,
   updateThreshold,
-  getAllSensors
+  getAllSensors,
+  deleteAllSensors,
+  deleteLast15Days,
 } from "../controllers/sensorController.js";
 
 const router = express.Router();
@@ -18,5 +20,7 @@ router.get("/latest", getLatestSensor);
 router.post("/threshold", updateThreshold);
 // Historial
 router.get("/history", getAllSensors);
+router.delete("/delete-all", deleteAllSensors);
+router.delete("/delete-15days", deleteLast15Days);
 
 export default router;
