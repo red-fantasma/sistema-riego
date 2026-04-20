@@ -2,7 +2,8 @@ import express from "express";
 import {
   addSensorDevice,
   getLatestSensor,
-  updateThreshold
+  updateThreshold,
+  getAllSensors
 } from "../controllers/sensorController.js";
 
 const router = express.Router();
@@ -15,5 +16,7 @@ router.get("/latest", getLatestSensor);
 
 // 🌡️ Cambiar umbral desde app
 router.post("/threshold", updateThreshold);
+// Historial
+router.get("/history", getAllSensors);
 
 export default router;
