@@ -13,6 +13,6 @@ const router = express.Router();
  *   "action": "ON"  // o "OFF"
  * }
  */
-router.post("/", verifyToken, controlPump);
+router.post("/control", verifyToken, controlPump);
 
 export default router;
