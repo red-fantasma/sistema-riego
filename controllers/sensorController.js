@@ -60,20 +60,20 @@ export const addSensorDevice = async (req, res) => {
 // ---------------- OBTENER DATOS ----------------
 export const getLatestSensor = async (req, res) => {
   try {
-    const sensor = await Sensor.findOne().sort({ createdAt: -1 });
+    // ← ordenar por "date" no por "createdAt"
+    const sensor = await Sensor.findOne().sort({ date: -1 });
 
     res.json({
-      temperature: sensor?.temperature || 0,
-      humidity: sensor?.humidity || 0,
+      temperature: sensor?.temperature ?? 0,
+      humidity: sensor?.humidity ?? 0,
+      deviceId: sensor?.device ?? "esp32-01",
+      date: sensor?.date ?? null,
       pumpActive: getPumpState() === "ON",
       threshold: temperatureThreshold
     });
 
   } catch (error) {
-    res.status(500).json({
-      message: "Error obteniendo datos",
-      error: error.message
-    });
+    res.status(500).json({ message: "Error obteniendo datos", error: error.message });
   }
 };
 
