@@ -4,15 +4,7 @@ import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-/**
- * 🔘 Control manual de la bomba
- * 🔒 Protegido con token (solo usuarios logueados)
- * 
- * Body esperado:
- * {
- *   "action": "ON"  // o "OFF"
- * }
- */
 router.post("/control", verifyToken, controlPump);
+router.get("/status", getPumpStatus); // ← sin token, ESP32 lo consulta directo
 
 export default router;

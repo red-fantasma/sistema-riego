@@ -34,3 +34,16 @@ export const controlPump = async (req, res) => {
 
 // 👇 EXPORTAMOS ESTADO para usar en sensorController
 export const getPumpState = () => pumpState;
+export const getPumpStatus = async (req, res) => {
+  try {
+    const wasManual = manualTrigger;
+    manualTrigger = false; // ← resetear después de que ESP32 lo lea
+
+    res.json({
+      pumpActive: pumpState === "ON",
+      manual: wasManual
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};

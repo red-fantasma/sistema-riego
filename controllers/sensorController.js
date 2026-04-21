@@ -1,6 +1,7 @@
 import Sensor from "../models/Sensor.js";
 import Irrigation from "../models/Irrigation.js";
 import { getPumpState } from "./pumpController.js";
+import Settings from "../models/Settings.js";
 // ---------------- ESTADOS ----------------
 let pumpState = "OFF";
 let temperatureThreshold = 25; // 🔥 umbral inicial
@@ -60,8 +61,10 @@ export const addSensorDevice = async (req, res) => {
 // ---------------- OBTENER DATOS ----------------
 export const getLatestSensor = async (req, res) => {
   try {
-    // ← ordenar por "date" no por "createdAt"
     const sensor = await Sensor.findOne().sort({ date: -1 });
+
+    // ← leer umbral desde Settings en MongoDB
+    const settings = await Settings.findOne();
 
     res.json({
       temperature: sensor?.temperature ?? 0,
@@ -69,7 +72,7 @@ export const getLatestSensor = async (req, res) => {
       deviceId: sensor?.device ?? "esp32-01",
       date: sensor?.date ?? null,
       pumpActive: getPumpState() === "ON",
-      threshold: temperatureThreshold
+      threshold: settings?.minTemp ?? temperatureThreshold
     });
 
   } catch (error) {
