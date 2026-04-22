@@ -1,7 +1,7 @@
 import Irrigation from "../models/Irrigation.js";
 
-// Estado global (igual que en sensorController)
 let pumpState = "OFF";
+let manualTrigger = false; // ← faltaba esta declaración
 
 export const controlPump = async (req, res) => {
   try {
@@ -9,6 +9,7 @@ export const controlPump = async (req, res) => {
 
     if (action === "ON") {
       pumpState = "ON";
+      manualTrigger = true; // ← faltaba esto
 
       await new Irrigation({
         duration: 10,
@@ -17,11 +18,13 @@ export const controlPump = async (req, res) => {
 
     } else {
       pumpState = "OFF";
+      manualTrigger = false;
     }
 
     res.json({
       message: `Bomba ${pumpState}`,
-      pumpActive: pumpState === "ON"
+      pumpActive: pumpState === "ON",
+      manual: manualTrigger
     });
 
   } catch (error) {
@@ -32,12 +35,12 @@ export const controlPump = async (req, res) => {
   }
 };
 
-// 👇 EXPORTAMOS ESTADO para usar en sensorController
 export const getPumpState = () => pumpState;
+
 export const getPumpStatus = async (req, res) => {
   try {
     const wasManual = manualTrigger;
-    manualTrigger = false; // ← resetear después de que ESP32 lo lea
+    manualTrigger = false;
 
     res.json({
       pumpActive: pumpState === "ON",
