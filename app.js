@@ -10,7 +10,7 @@ import sensorRoutes from "./routes/sensorRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 import backupRoutes from "./routes/backupRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-
+import irrigationRoutes from "./routes/irrigationRoutes.js";
 
 dotenv.config();
 
@@ -28,6 +28,7 @@ app.use("/api/sensors", sensorRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/backup", backupRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/irrigation", irrigationRoutes);
 // ruta de prueba
 app.get("/", (req, res) => {
   res.send("API de riego funcionando 🚀");

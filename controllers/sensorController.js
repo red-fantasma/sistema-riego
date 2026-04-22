@@ -131,7 +131,7 @@ export const updateThreshold = async (req, res) => {
 // ---------------- HISTORIAL COMPLETO ----------------
 export const getAllSensors = async (req, res) => {
   try {
-    const sensores = await Sensor.find().sort({ date: -1 }).limit(100);
+    const sensores = await Sensor.find().sort({ date: -1 });
     res.json(sensores);
   } catch (error) {
     res.status(500).json({
